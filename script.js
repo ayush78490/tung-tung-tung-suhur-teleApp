@@ -1,5 +1,9 @@
 // Initialize Telegram WebApp
 const tg = window.Telegram.WebApp;
+if (!tg) {
+    console.error("Telegram Web App SDK not loaded");
+    alert("Telegram Web App SDK failed to load");
+}
 tg.expand();
 tg.enableClosingConfirmation();
 tg.setHeaderColor('#14f195');
@@ -8,7 +12,7 @@ tg.setBackgroundColor('#f5f5f5');
 // Set initial theme
 document.body.className = tg.colorScheme;
 tg.onEvent('themeChanged', () => {
-  document.body.className = tg.colorScheme;
+    document.body.className = tg.colorScheme;
 });
 
 // Game state
@@ -31,12 +35,10 @@ const telegramLogin = document.getElementById('telegram-login');
 async function initProvider() {
     if ('phantom' in window) {
         provider = window.phantom.solana;
-        
         if (provider?.isPhantom) {
             return provider;
         }
     }
-    
     window.open('https://phantom.app/', '_blank');
     throw new Error("Phantom wallet not installed");
 }
@@ -82,7 +84,6 @@ async function associateAccounts(telegramId, walletAddress) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ telegramId, walletAddress }),
         });
-        
         if (!response.ok) throw new Error('Failed to associate accounts');
     } catch (error) {
         console.error('Association error:', error);
@@ -131,14 +132,17 @@ coin.addEventListener('click', () => {
 
 // Telegram auth handler
 function onTelegramAuth(user) {
+    console.log("Telegram Auth User:", user); // Debug the user object
     if (!validateAuthData(user)) {
-        tg.showAlert("Invalid authentication");
+        console.error("Invalid auth data:", user);
+        tg.showAlert("Invalid authentication: " + JSON.stringify(user));
         return;
     }
     
     localStorage.setItem('telegramUser', JSON.stringify(user));
     telegramLogin.classList.add('hidden');
     walletSection.classList.remove('hidden');
+    tg.showAlert(`Logged in as ${user.first_name} ${user.last_name || ''}`);
 }
 
 // Auth validation
