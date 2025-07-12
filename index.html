@@ -17,10 +17,12 @@
                     data-telegram-login="@tungTungtung7849_bot" 
                     data-size="large"
                     data-onauth="onTelegramAuth(user)" 
-                    data-request-access="write"></script>
+                    data-request-access="write"
+                    onerror="onWidgetError()"></script>
             <script type="text/javascript">
-                function onTelegramAuth(user) {
-                    alert('Logged in as ' + user.first_name + ' ' + user.last_name + ' (' + user.id + (user.username ? ', @' + user.username : '') + ')');
+                function onWidgetError() {
+                    console.error("Telegram Login Widget failed to load");
+                    window.Telegram.WebApp.showAlert("Telegram Login Widget failed to load");
                 }
             </script>
         </div>

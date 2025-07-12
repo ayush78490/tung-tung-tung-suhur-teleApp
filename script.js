@@ -86,7 +86,7 @@ connectWalletBtn.addEventListener('click', async () => {
 // Account association
 async function associateAccounts(telegramId, walletAddress) {
     try {
-        const response = await fetch('YOUR_BACKEND_ENDPOINT', {
+        const response = await fetch('https://your-backend.com/api/associate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ telegramId, walletAddress }),
