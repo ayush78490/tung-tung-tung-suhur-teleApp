@@ -5,9 +5,16 @@ if (!tg) {
     alert("Telegram Web App SDK failed to load");
 }
 tg.expand();
-tg.enableClosingConfirmation();
-tg.setHeaderColor('#14f195');
-tg.setBackgroundColor('#f5f5f5');
+console.log("Telegram Web App SDK version:", tg.version);
+
+// Skip unsupported features in version 6.0
+if (tg.version >= "6.1") {
+    tg.enableClosingConfirmation();
+    tg.setHeaderColor('#14f195');
+    tg.setBackgroundColor('#f5f5f5');
+} else {
+    console.warn("Skipping unsupported features for SDK version", tg.version);
+}
 
 // Set initial theme
 document.body.className = tg.colorScheme;
@@ -132,7 +139,12 @@ coin.addEventListener('click', () => {
 
 // Telegram auth handler
 function onTelegramAuth(user) {
-    console.log("Telegram Auth User:", user); // Debug the user object
+    console.log("Telegram Auth User:", user);
+    if (!user) {
+        console.error("No user data received from Telegram Login Widget");
+        tg.showAlert("Telegram login failed: No user data received");
+        return;
+    }
     if (!validateAuthData(user)) {
         console.error("Invalid auth data:", user);
         tg.showAlert("Invalid authentication: " + JSON.stringify(user));
