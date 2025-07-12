@@ -7,7 +7,6 @@ if (!tg) {
 tg.expand();
 console.log("Telegram Web App SDK version:", tg.version);
 
-// Skip unsupported features in version 6.0
 if (tg.version >= "6.1") {
     tg.enableClosingConfirmation();
     tg.setHeaderColor('#14f195');
@@ -16,19 +15,16 @@ if (tg.version >= "6.1") {
     console.warn("Skipping unsupported features for SDK version", tg.version);
 }
 
-// Set initial theme
 document.body.className = tg.colorScheme;
 tg.onEvent('themeChanged', () => {
     document.body.className = tg.colorScheme;
 });
 
-// Game state
 let score = 0;
 let walletConnected = false;
 let publicKey = null;
 let provider = null;
 
-// DOM elements
 const connectWalletBtn = document.getElementById('connect-wallet');
 const walletSection = document.getElementById('wallet-section');
 const gameSection = document.getElementById('game-section');
@@ -37,8 +33,8 @@ const scoreDisplay = document.getElementById('score-display');
 const coin = document.getElementById('coin');
 const logoutBtn = document.getElementById('logout-btn');
 const telegramLogin = document.getElementById('telegram-login');
+const qrLoginBtn = document.getElementById('qr-login');
 
-// Initialize Phantom provider
 async function initProvider() {
     if ('phantom' in window) {
         provider = window.phantom.solana;
@@ -50,7 +46,6 @@ async function initProvider() {
     throw new Error("Phantom wallet not installed");
 }
 
-// Wallet connection handler
 connectWalletBtn.addEventListener('click', async () => {
     try {
         provider = await initProvider();
@@ -83,7 +78,6 @@ connectWalletBtn.addEventListener('click', async () => {
     }
 });
 
-// Account association
 async function associateAccounts(telegramId, walletAddress) {
     try {
         const response = await fetch('https://your-backend.com/api/associate', {
@@ -97,7 +91,6 @@ async function associateAccounts(telegramId, walletAddress) {
     }
 }
 
-// Logout handler
 logoutBtn.addEventListener('click', () => {
     localStorage.removeItem('telegramUser');
     localStorage.removeItem('solanaWallet');
@@ -118,7 +111,6 @@ logoutBtn.addEventListener('click', () => {
     scoreDisplay.textContent = 'Score: 0';
 });
 
-// Game logic
 coin.addEventListener('click', () => {
     if (!walletConnected) return;
     
@@ -137,16 +129,16 @@ coin.addEventListener('click', () => {
     }
 });
 
-// Telegram auth handler
 function onTelegramAuth(user) {
-    console.log("Telegram Auth User:", user);
+    console.log("Telegram Auth User:", JSON.stringify(user, null, 2));
+    console.log("Telegram Auth Attempt - Bot: @tungTungtung7849_bot, Domain: https://tung-tung-tung-suhur-tele-app.vercel.app/");
     if (!user) {
         console.error("No user data received from Telegram Login Widget");
         tg.showAlert("Telegram login failed: No user data received");
         return;
     }
     if (!validateAuthData(user)) {
-        console.error("Invalid auth data:", user);
+        console.error("Invalid auth data:", JSON.stringify(user, null, 2));
         tg.showAlert("Invalid authentication: " + JSON.stringify(user));
         return;
     }
@@ -157,14 +149,20 @@ function onTelegramAuth(user) {
     tg.showAlert(`Logged in as ${user.first_name} ${user.last_name || ''}`);
 }
 
-// Auth validation
 function validateAuthData(authData) {
     const requiredFields = ['id', 'first_name', 'auth_date'];
     return requiredFields.every(field => authData[field]);
 }
 
-// Initialize on load
+qrLoginBtn.addEventListener('click', () => {
+    tg.showQRLogin({
+        bot_id: '@tungTungtung7849_bot',
+        onAuth: onTelegramAuth
+    });
+});
+
 document.addEventListener('DOMContentLoaded', () => {
+    console.log("App loaded at: https://tung-tung-tung-suhur-tele-app.vercel.app/");
     const telegramUser = localStorage.getItem('telegramUser');
     const solanaWallet = localStorage.getItem('solanaWallet');
     
@@ -183,6 +181,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Handle viewport changes
 tg.onEvent('viewportChanged', tg.expand);
 tg.ready();
