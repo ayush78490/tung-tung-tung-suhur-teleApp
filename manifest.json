@@ -1,0 +1,11 @@
+{
+    "app_name": "Solana Tap Game",
+    "app_description": "A simple tap game with Solana wallet integration",
+    "app_icon": "https://yourdomain.com/icon.png",
+    "app_url": "https://yourdomain.com/index.html",
+    "options": {
+        "platform": ["android", "ios", "macos", "windows", "linux"],
+        "inline_query": false,
+        "has_settings": false
+    }
+}
