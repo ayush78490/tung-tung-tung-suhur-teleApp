@@ -33,7 +33,6 @@ const scoreDisplay = document.getElementById('score-display');
 const coin = document.getElementById('coin');
 const logoutBtn = document.getElementById('logout-btn');
 const telegramLogin = document.getElementById('telegram-login');
-const qrLoginBtn = document.getElementById('qr-login');
 
 async function initProvider() {
     if ('phantom' in window) {
@@ -153,13 +152,6 @@ function validateAuthData(authData) {
     const requiredFields = ['id', 'first_name', 'auth_date'];
     return requiredFields.every(field => authData[field]);
 }
-
-qrLoginBtn.addEventListener('click', () => {
-    tg.showQRLogin({
-        bot_id: '@tungTungtung7849_bot',
-        onAuth: onTelegramAuth
-    });
-});
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log("App loaded at: https://tung-tung-tung-suhur-tele-app.vercel.app/");
